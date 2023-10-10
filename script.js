@@ -57,15 +57,16 @@ const fetchGeoLocation = async () => {
 };
 
 searchBar.onchange = async () => {
-  searchBarText = searchBar.value;
+  const searchBarText = searchBar.value;
   console.log(searchBarText)
   const forecast = await fetchForecastCity(searchBarText);
   
   const { name, country, sunrise, sunset } = forecast.city;
-  console.log(name, country, sunrise, sunset);
   const { temp } = forecast.list[0].main;
   const { main, description } = forecast.list[0].weather[0];
-  console.log(temp, main, description);
+
+  const sunriseReadable = new Date(sunrise * 1000);
+  const sunsetReadable = new Date(sunset * 1000);
 
   const weatherOutput = `
     <div>
@@ -73,6 +74,12 @@ searchBar.onchange = async () => {
     </div>
     <div>
       ${Math.round(temp)}°C
+    </div>
+    <div>
+      sunrise: ${sunriseReadable.getHours()}:${sunriseReadable.getMinutes()}
+    </div>
+    <div>
+      sunset: ${sunsetReadable.getHours()}:${sunsetReadable.getMinutes()}
     </div>
     <div>
       ${main}, ${description}
