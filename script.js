@@ -56,17 +56,43 @@ const fetchGeoLocation = async () => {
   }
 };
 
-searchBar.onchange = async () => {
-  const searchBarText = searchBar.value;
-  console.log(searchBarText)
-  const forecast = await fetchForecastCity(searchBarText);
-  
+const filterFutureForecast = forecastList => {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  const futureForecast = [];
+  forecastList.forEach(forecast => {
+    if (forecast.dt_txt.includes('12:00:00')) {
+      const dateReadable = new Date(forecast.dt * 1000);
+      futureForecast.push([days[dateReadable.getDay()], Math.round(forecast.main.temp)]);
+    }
+  });
+
+  if (futureForecast.length === 5) {
+    futureForecast.shift();
+  }
+  return futureForecast;
+};
+
+const displayFutureForecast = forecastList => {
+  let futureforecastList = '';
+  forecastList.forEach(forecast => {
+    futureforecastList += `
+      <div>
+        ${forecast[0]} ${forecast[1]}°C
+      </div>
+    `
+  });
+  return futureforecastList;
+}
+
+const displayWeather = forecast => {
   const { name, country, sunrise, sunset } = forecast.city;
   const { temp } = forecast.list[0].main;
   const { main, description } = forecast.list[0].weather[0];
 
   const sunriseReadable = new Date(sunrise * 1000);
   const sunsetReadable = new Date(sunset * 1000);
+
+  const futureForecast = filterFutureForecast(forecast.list);
 
   const weatherOutput = `
     <div>
@@ -84,6 +110,15 @@ searchBar.onchange = async () => {
     <div>
       ${main}, ${description}
     </div>
+    ${displayFutureForecast(futureForecast)}
   `;
   weatherPlaceholder.innerHTML = weatherOutput;
+};
+
+searchBar.onchange = async () => {
+  const searchBarText = searchBar.value;
+  console.log(searchBarText)
+  const forecast = await fetchForecastCity(searchBarText);
+  displayWeather(forecast);
 }
+
