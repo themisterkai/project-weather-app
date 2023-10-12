@@ -103,8 +103,12 @@ const displayFutureForecast = forecastList => {
   let futureforecastList = '';
   forecastList.forEach(forecast => {
     futureforecastList += `
-      <div>
-        ${forecast[0]} ${forecast[1]}°C
+      <div class="future-forecast-day">
+        
+        ${forecast[0]} 
+      </div>
+      <div class="future-forecast-temp">
+        ${forecast[1]}°C
       </div>
     `
   });
@@ -131,18 +135,16 @@ const displayWeather = (weather, forecast) => {
     <div>
       ${name}, ${country}
     </div>
-    <div>
-      ${Math.round(temp)}°C
+    <div class="temp-desc">
+    ${description}  | ${Math.round(temp)}°C 
     </div>
     <div>
-      sunrise: ${sunriseReadable.getHours() + sunriseOffset}:${sunriseReadable.getMinutes().toString().padStart(2, "0")}
+      sunrise  ${sunriseReadable.getHours() + sunriseOffset}:${sunriseReadable.getMinutes().toString().padStart(2, "0")}
     </div>
     <div>
-      sunset: ${sunsetReadable.getHours() + sunsetOffset}:${sunsetReadable.getMinutes().toString().padStart(2, "0")}
+      sunset  ${sunsetReadable.getHours() + sunsetOffset}:${sunsetReadable.getMinutes().toString().padStart(2, "0")}
     </div>
-    <div>
-      ${main}, ${description}
-    </div>
+    
     ${displayFutureForecast(futureForecast)}
     `;
   weatherPlaceholder.innerHTML = weatherOutput;
