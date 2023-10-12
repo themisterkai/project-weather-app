@@ -2,13 +2,30 @@
 
 
 // URLs
+const weatherUrlCity = 'https://api.openweathermap.org/data/2.5/weather?q=';
 const forecastUrlCity = 'https://api.openweathermap.org/data/2.5/forecast?q=';
-const forecastUrlLatLong = 'https://api.openweathermap.org/data/2.5/forecast?';
-const geoLocUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=Stockholm&limit=5&appid=';
+// const forecastUrlLatLong = 'https://api.openweathermap.org/data/2.5/forecast?';
+// const geoLocUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=Stockholm&limit=5&appid=';
 
 // HTML Selectors
 const weatherPlaceholder = document.querySelector('.weather');
 const searchBar = document.getElementById('search-bar');
+
+const fetchWeatherCity = async (city) => {
+  try {
+    const res = await fetch(`${weatherUrlCity}${city}&appid=${API_KEY}&units=metric`);
+    if (!res.ok) {
+      throw new Error(res.error);
+    }
+    const json = await res.json();
+    console.log(json);
+
+    return json;
+  } catch (e) {
+    console.error(e);
+  }
+ 
+};
 
 const fetchForecastCity = async (city) => {
   try {
@@ -26,49 +43,46 @@ const fetchForecastCity = async (city) => {
  
 };
 
-const fetchForecastLatLong = async (lat, lon) => {
-  try {
-    const res = await fetch(`${forecastUrlLatLong}lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
-    if (!res.ok) {
-      throw new Error(res.error);
-    }
-    const json = await res.json();
-    console.log(json);
+// const fetchForecastLatLong = async (lat, lon) => {
+//   try {
+//     const res = await fetch(`${forecastUrlLatLong}lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+//     if (!res.ok) {
+//       throw new Error(res.error);
+//     }
+//     const json = await res.json();
+//     console.log(json);
     
-    return json;
-  } catch (e) {
+//     return json;
+//   } catch (e) {
     
-  }
+//   }
   
-};
+// };
 
-const fetchGeoLocation = async () => {
-  try {
-    const res = await fetch(`${geoLocUrl}${API_KEY}`);
-    if (!res.ok) {
-      throw new Error(res.error);
-    }
-    const json = await res.json();
-    console.log(json);
-    return [json[0].lat, json[0].lon, json[0].name, json[0].country];
-  } catch (e) {
-    console.error(e);
-  }
-};
+// const fetchGeoLocation = async () => {
+//   try {
+//     const res = await fetch(`${geoLocUrl}${API_KEY}`);
+//     if (!res.ok) {
+//       throw new Error(res.error);
+//     }
+//     const json = await res.json();
+//     console.log(json);
+//     return [json[0].lat, json[0].lon, json[0].name, json[0].country];
+//   } catch (e) {
+//     console.error(e);
+//   }
+// };
 
 const filterFutureForecast = forecastList => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   const futureForecast = [];
+  const currentDate = new Date(forecastList[0].dt * 1000)
   forecastList.forEach(forecast => {
-    if (forecast.dt_txt.includes('12:00:00')) {
-      const dateReadable = new Date(forecast.dt * 1000);
+    const dateReadable = new Date(forecast.dt * 1000);
+    if (forecast.dt_txt.includes('09:00:00') && currentDate.getDay() !== dateReadable.getDay()) {
       futureForecast.push([days[dateReadable.getDay()], Math.round(forecast.main.temp)]);
     }
   });
-
-  if (futureForecast.length === 5) {
-    futureForecast.shift();
-  }
   return futureForecast;
 };
 
@@ -84,13 +98,19 @@ const displayFutureForecast = forecastList => {
   return futureforecastList;
 }
 
-const displayWeather = forecast => {
-  const { name, country, sunrise, sunset } = forecast.city;
-  const { temp } = forecast.list[0].main;
-  const { main, description } = forecast.list[0].weather[0];
+const displayWeather = (weather, forecast) => {
+  const { name, timezone } = weather;
+  const { country, sunrise, sunset } = weather.sys;
+  const { temp } = weather.main;
+  const { main, description } = weather.weather[0];
+  
+  const sunriseReadable = new Date((sunrise + timezone) * 1000);
+  const sunsetReadable = new Date((sunset+ timezone) * 1000);
 
-  const sunriseReadable = new Date(sunrise * 1000);
-  const sunsetReadable = new Date(sunset * 1000);
+  // we need to get the timezone offset so we can show it in the local time
+  // instead of GMT
+  const sunriseOffset = sunriseReadable.getTimezoneOffset() / 60;
+  const sunsetOffset = sunsetReadable.getTimezoneOffset() / 60;
 
   const futureForecast = filterFutureForecast(forecast.list);
 
@@ -102,23 +122,24 @@ const displayWeather = forecast => {
       ${Math.round(temp)}°C
     </div>
     <div>
-      sunrise: ${sunriseReadable.getHours()}:${sunriseReadable.getMinutes()}
+      sunrise: ${sunriseReadable.getHours() + sunriseOffset}:${sunriseReadable.getMinutes()}
     </div>
     <div>
-      sunset: ${sunsetReadable.getHours()}:${sunsetReadable.getMinutes()}
+      sunset: ${sunsetReadable.getHours() + sunsetOffset}:${sunsetReadable.getMinutes()}
     </div>
     <div>
       ${main}, ${description}
     </div>
     ${displayFutureForecast(futureForecast)}
-  `;
+    `;
   weatherPlaceholder.innerHTML = weatherOutput;
 };
 
 searchBar.onchange = async () => {
   const searchBarText = searchBar.value;
   console.log(searchBarText)
+  const weather = await fetchWeatherCity(searchBarText);
   const forecast = await fetchForecastCity(searchBarText);
-  displayWeather(forecast);
+  displayWeather(weather, forecast);
 }
 
