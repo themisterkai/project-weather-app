@@ -43,21 +43,34 @@ const fetchForecastCity = async (city) => {
  
 };
 
-// const fetchForecastLatLong = async (lat, lon) => {
-//   try {
-//     const res = await fetch(`${forecastUrlLatLong}lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
-//     if (!res.ok) {
-//       throw new Error(res.error);
-//     }
-//     const json = await res.json();
-//     console.log(json);
+const fetchForecastLatLong = async (lat, lon) => {
+  try {
+    const res = await fetch(`${forecastUrlLatLong}lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+    if (!res.ok) {
+      throw new Error(res.error);
+    }
+    const json = await res.json();
+    console.log(json);
     
-//     return json;
-//   } catch (e) {
+    return json;
+  } catch (e) {
     
-//   }
-  
-// };
+  }
+};
+
+// TODO: Advanced Stretch goal for geolocation
+// function getLocation() {
+  //     if (navigator.geolocation) {
+  //         navigator.geolocation.getCurrentPosition(showPosition);
+  //     } else {
+  //         console.log("Geolocation is not supported by this browser.");
+  //     }
+  //   }
+  //   function showPosition(position) {
+  //     console.log(position.coords.latitude);
+  //     console.log(position.coords.longitude); 
+  //   }
+  //   getLocation()
 
 // const fetchGeoLocation = async () => {
 //   try {
@@ -122,10 +135,10 @@ const displayWeather = (weather, forecast) => {
       ${Math.round(temp)}°C
     </div>
     <div>
-      sunrise: ${sunriseReadable.getHours() + sunriseOffset}:${sunriseReadable.getMinutes()}
+      sunrise: ${sunriseReadable.getHours() + sunriseOffset}:${sunriseReadable.getMinutes().toString().padStart(2, "0")}
     </div>
     <div>
-      sunset: ${sunsetReadable.getHours() + sunsetOffset}:${sunsetReadable.getMinutes()}
+      sunset: ${sunsetReadable.getHours() + sunsetOffset}:${sunsetReadable.getMinutes().toString().padStart(2, "0")}
     </div>
     <div>
       ${main}, ${description}
@@ -143,3 +156,11 @@ searchBar.onchange = async () => {
   displayWeather(weather, forecast);
 }
 
+(async() => {
+  const initialWeather = await fetchWeatherCity('stockholm');
+  const initialForecast = await fetchForecastCity('stockholm');
+  displayWeather(initialWeather, initialForecast);
+
+
+
+})();
