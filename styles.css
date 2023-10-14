@@ -6,6 +6,12 @@ body {
   align-items: center;
 }
 
+.geolocation {
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 16px;
+}
+
 .cloudy {
   background: #F4F7F8;
   color: #F47775;
@@ -40,12 +46,12 @@ p {
   margin: 2px;
 }
 
-.todays-description h2 {
+.description-box h2 {
   font-size: 32px;
   max-width: 400px;
 }
 
-.todays-description img {
+.description-box img {
   height: 70px;
 }
 
@@ -73,23 +79,27 @@ input {
   border: 1px solid;
   border-radius: 4px;
   padding: 4px 8px;
-  margin: 30px 0;
+  margin: 30px 0 5px;
 }
 
-.cloudy input, .cloudy input::placeholder {
+.cloudy a {
   color: #F47775;
 }
 
-.rainy input, .rainy input::placeholder {
+.cloudy input, .cloudy input::placeholder, .cloudy a {
+  color: #F47775;
+}
+
+.rainy input, .rainy input::placeholder, .rainy a {
   color: #164A68;
 }
 
-.sunny input, .sunny input::placeholder {
+.sunny input, .sunny input::placeholder, .sunny a {
   color:  #2A5510;
   border-radius: 4px;
 }
 
-.snow input, .snow input::placeholder {
+.snow input, .snow input::placeholder, .snow a {
   color: #AEB6FF;
 }
 
@@ -125,11 +135,11 @@ button {
     font-size: 20px;
   }
 
-  .todays-description img {
+  .description-box img {
     width: 150px;
   }
 
-  .todays-description h2 {
+  .description-box h2 {
     font-size: 38px;
     max-width: 500px;
   }

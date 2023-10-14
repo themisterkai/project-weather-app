@@ -2,21 +2,28 @@
 
 
 // URLs
-const weatherUrlCity = 'https://api.openweathermap.org/data/2.5/weather?q=';
-const forecastUrlCity = 'https://api.openweathermap.org/data/2.5/forecast?q=';
-const forecastUrlLatLong = 'https://api.openweathermap.org/data/2.5/forecast?';
-// const geoLocUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=Stockholm&limit=5&appid=';
+const weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?';
+const forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?';
 
 // HTML Selectors
 const mainSelector = document.getElementById("main");
+const geolocationLink = document.getElementById("geolink");
 const weatherPlaceholder = document.querySelector('.weather');
 const searchBar = document.getElementById('search-bar');
 const forecastPlaceholder = document.querySelector('.forecast');
 const descriptionPlaceholder = document.getElementById('description');
 
-const fetchWeatherCity = async (city) => {
+const fetchWeatherCity = async ({
+  city,
+  lat,
+  lon,
+}) => {
+  let url = `${weatherUrl}q=${city}&appid=${API_KEY}&units=metric`;
+  if (lat != null && lon != null) {
+    url = `${weatherUrl}lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+  }
   try {
-    const res = await fetch(`${weatherUrlCity}${city}&appid=${API_KEY}&units=metric`);
+    const res = await fetch(url);
     if (!res.ok) {
       throw new Error(res.error);
     }
@@ -30,9 +37,17 @@ const fetchWeatherCity = async (city) => {
  
 };
 
-const fetchForecastCity = async (city) => {
+const fetchForecastCity = async ({
+  city,
+  lat,
+  lon,
+}) => {
+  let url = `${forecastUrl}q=${city}&appid=${API_KEY}&units=metric`;
+  if (lat != null && lon != null) {
+    url = `${forecastUrl}lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+  }
   try {
-    const res = await fetch(`${forecastUrlCity}${city}&appid=${API_KEY}&units=metric`);
+    const res = await fetch(url);
     if (!res.ok) {
       throw new Error(res.error);
     }
@@ -43,51 +58,22 @@ const fetchForecastCity = async (city) => {
   } catch (e) {
     console.error(e);
   }
- 
 };
 
-// TODO: Advanced Stretch goal for geolocation
-const fetchForecastLatLong = async (lat, lon) => {
+const getUserLocation = async () => {
+   return new Promise((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject)
+    );
+};
+
+const getUserLatLong = async () => {
   try {
-    const res = await fetch(`${forecastUrlLatLong}lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
-    if (!res.ok) {
-      throw new Error(res.error);
-    }
-    const json = await res.json();
-    console.log(json);
-    
-    return json;
+    const position = await getUserLocation();
+    return position.coords;
   } catch (e) {
-    
+    console.error(e);
   }
 };
-
-// function getLocation() {
-  //     if (navigator.geolocation) {
-  //         navigator.geolocation.getCurrentPosition(showPosition);
-  //     } else {
-  //         console.log("Geolocation is not supported by this browser.");
-  //     }
-  //   }
-  //   function showPosition(position) {
-  //     console.log(position.coords.latitude);
-  //     console.log(position.coords.longitude); 
-  //   }
-  //   getLocation()
-
-// const fetchGeoLocation = async () => {
-//   try {
-//     const res = await fetch(`${geoLocUrl}${API_KEY}`);
-//     if (!res.ok) {
-//       throw new Error(res.error);
-//     }
-//     const json = await res.json();
-//     console.log(json);
-//     return [json[0].lat, json[0].lon, json[0].name, json[0].country];
-//   } catch (e) {
-//     console.error(e);
-//   }
-// };
 
 const filterFutureForecast = forecastList => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -189,13 +175,20 @@ const displayWeather = (weather, forecast) => {
 searchBar.onchange = async () => {
   const searchBarText = searchBar.value;
   searchBar.value = '';
-  const weather = await fetchWeatherCity(searchBarText);
-  const forecast = await fetchForecastCity(searchBarText);
+  const weather = await fetchWeatherCity({city: searchBarText});
+  const forecast = await fetchForecastCity({city: searchBarText});
+  displayWeather(weather, forecast);
+}
+
+geolocationLink.onclick = async () => {
+  const { latitude, longitude } = await getUserLatLong();
+  const weather = await fetchWeatherLatLong(latitude, longitude);
+  const forecast = await fetchForecastLatLong(latitude, longitude);
   displayWeather(weather, forecast);
 }
 
 (async() => {
-  const initialWeather = await fetchWeatherCity('stockholm');
-  const initialForecast = await fetchForecastCity('stockholm');
+  const initialWeather = await fetchWeatherCity({city: 'stockholm'});
+  const initialForecast = await fetchForecastCity({city: 'stockholm'});
   displayWeather(initialWeather, initialForecast);
 })();
