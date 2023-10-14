@@ -77,15 +77,32 @@ const getUserLatLong = async () => {
 
 const filterFutureForecast = forecastList => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-  const futureForecast = [];
-  const currentDate = new Date(forecastList[0].dt * 1000)
-  forecastList.forEach(forecast => {
-    const dateReadable = new Date(forecast.dt * 1000);
-    if (forecast.dt_txt.includes('09:00:00') && currentDate.getDay() !== dateReadable.getDay()) {
-      futureForecast.push([days[dateReadable.getDay()], Math.round(forecast.main.temp)]);
+
+  const forecastCombined =  forecastList.reduce((acc, forecast) => {
+    const systemDate = new Date();
+    const forecastDateReadable = new Date(forecast.dt * 1000);
+    const forecastDate = forecast.dt_txt.split(" ")[0];
+
+    if (!acc.hasOwnProperty(forecastDate)) {
+      acc[forecastDate] = {
+        high: Number.MIN_VALUE,
+        low: Number.MAX_VALUE,
+        date: forecastDate,
+        day: systemDate.getDay() === forecastDateReadable.getDay() ? 'Today' : days[forecastDateReadable.getDay()],
+      };
     }
+    if (forecast.main.temp_max > acc[forecastDate].high) {
+      acc[forecastDate].high = Math.round(forecast.main.temp_max);
+    }
+    if (forecast.main.temp_min < acc[forecastDate].low) {
+      acc[forecastDate].low = Math.round(forecast.main.temp_min);
+    }
+    return acc;
+  }, {});
+
+  return Object.values(forecastCombined).sort((a, b) => {
+    return new Date(a.date) - new Date(b.date);
   });
-  return futureForecast;
 };
 
 const displayFutureForecast = forecastList => {
@@ -93,8 +110,8 @@ const displayFutureForecast = forecastList => {
   forecastList.forEach(forecast => {
     futureforecastList += `
       <div>
-        <p>${forecast[0]}</p>
-        <p>${forecast[1]}°C</p>
+        <p>${forecast.day}</p>
+        <p>${forecast.low}°C / ${forecast.high}°C </p>
       </div>
     `
   });
