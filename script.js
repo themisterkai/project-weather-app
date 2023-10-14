@@ -14,6 +14,7 @@ const forecastPlaceholder = document.querySelector('.forecast');
 const descriptionPlaceholder = document.getElementById('description');
 const fahrenheitController = document.getElementById('control-f');
 const celciusController = document.getElementById('control-c');
+const controlPlaceHolder = document.querySelector(".control");
 
 let temperatureMeasurementSetting = 'celcius';
 
@@ -175,6 +176,24 @@ const showDescription = (city, description) => {
   };
 };
 
+const displayTemperatureMeasurementSetting = () => {
+  if (temperatureMeasurementSetting === 'celcius') {
+    celciusController.innerHTML = `
+      <b>Celcius</b>
+    `;
+    fahrenheitController.innerHTML = `
+      <a href="javascript:void(0)">Fahrenheit</a>
+    `;
+  } else {
+    celciusController.innerHTML = `
+      <a href="javascript:void(0)">Celcius</a>
+    `;
+    fahrenheitController.innerHTML = `
+      <b>Fahrenheit</b>
+    `;
+  }
+};
+
 const displayWeather = (weather, forecast) => {
   const { name, timezone } = weather;
   const { sunrise, sunset } = weather.sys;
@@ -246,6 +265,7 @@ fahrenheitController.onclick = () => {
     element.style.display = 'none';
   });
   temperatureMeasurementSetting = 'fahrenheit';
+  displayTemperatureMeasurementSetting();
 };
 
 celciusController.onclick = () => {
@@ -258,10 +278,12 @@ celciusController.onclick = () => {
     element.style.display = 'none';
   });
   temperatureMeasurementSetting = 'celcius';
+  displayTemperatureMeasurementSetting();
 };
 
 (async() => {
   const initialWeather = await fetchWeather({city: 'stockholm'});
   const initialForecast = await fetchForecast({city: 'stockholm'});
   displayWeather(initialWeather, initialForecast);
+  displayTemperatureMeasurementSetting();
 })();
