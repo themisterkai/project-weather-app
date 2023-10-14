@@ -128,6 +128,7 @@ const showDescription = (city, description) => {
     case 'Rain':
     case 'Thunderstorm':
     case 'Drizzle':
+    case 'Mist':
       descriptionPlaceholder.innerHTML = `Don't forget your umbrella. It's wet in ${city} today.`;
       icon.src = "./icons/umbrella.svg"
       mainSelector.classList.add("rainy");
