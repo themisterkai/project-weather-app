@@ -3,21 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Weather App</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <title>Weather App - Kai & Kalyani</title>
   <link rel="stylesheet" href="styles.css">
+  <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,700&display=swap"
+      rel="stylesheet"
+    />
 </head>
-<body>
-  <h1>Kalyani and Kai's Weather App</h1>
+<body id="main">
   <div class="search-bar" >
     <input id="search-bar" type="text" placeholder="Search by city name">
   </div>
-  <div class="weather">
-  </div> 
-  <div class="forecast-wrapper">
-
-  </div>
-  
+  <section>
+    <div class="weather">
+    </div>
+    <div class="todays-description">
+      <img id="icon" />
+      <h2 id="description"></h2>
+    </div>
+  </section>
+  <section id="forecast" class="forecast"></section>
   <script src="./constants.js"></script>
   <script src="./script.js"></script>
 </body>

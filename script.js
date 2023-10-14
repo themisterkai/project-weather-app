@@ -4,12 +4,15 @@
 // URLs
 const weatherUrlCity = 'https://api.openweathermap.org/data/2.5/weather?q=';
 const forecastUrlCity = 'https://api.openweathermap.org/data/2.5/forecast?q=';
-// const forecastUrlLatLong = 'https://api.openweathermap.org/data/2.5/forecast?';
+const forecastUrlLatLong = 'https://api.openweathermap.org/data/2.5/forecast?';
 // const geoLocUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=Stockholm&limit=5&appid=';
 
 // HTML Selectors
+const mainSelector = document.getElementById("main");
 const weatherPlaceholder = document.querySelector('.weather');
 const searchBar = document.getElementById('search-bar');
+const forecastPlaceholder = document.querySelector('.forecast');
+const descriptionPlaceholder = document.getElementById('description');
 
 const fetchWeatherCity = async (city) => {
   try {
@@ -43,6 +46,7 @@ const fetchForecastCity = async (city) => {
  
 };
 
+// TODO: Advanced Stretch goal for geolocation
 const fetchForecastLatLong = async (lat, lon) => {
   try {
     const res = await fetch(`${forecastUrlLatLong}lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
@@ -58,7 +62,6 @@ const fetchForecastLatLong = async (lat, lon) => {
   }
 };
 
-// TODO: Advanced Stretch goal for geolocation
 // function getLocation() {
   //     if (navigator.geolocation) {
   //         navigator.geolocation.getCurrentPosition(showPosition);
@@ -103,56 +106,89 @@ const displayFutureForecast = forecastList => {
   let futureforecastList = '';
   forecastList.forEach(forecast => {
     futureforecastList += `
-      <div class="future-forecast-day">
-        
-        ${forecast[0]} 
-      </div>
-      <div class="future-forecast-temp">
-        ${forecast[1]}°C
+      <div>
+        <p>${forecast[0]}</p>
+        <p>${forecast[1]}°C</p>
       </div>
     `
   });
   return futureforecastList;
-}
+};
+
+const getTime = (time, timezone) => {
+  const timeReadable = new Date((time + timezone) * 1000);
+
+   // we need to get the timezone offset so we can show it in the local time
+  // instead of GMT
+  const timezoneOffset = timeReadable.getTimezoneOffset() / 60;
+
+  return `${timeReadable.getHours() + timezoneOffset}.${timeReadable.getMinutes().toString().padStart(2, "0")}`
+};
+
+const showDescription = (city, description) => {
+  mainSelector.classList.remove(...mainSelector.classList);
+  // description = 'Sno';
+  switch (description) {
+    case 'Clear':
+      descriptionPlaceholder.innerHTML = `Get your sunnies on. ${city} is looking rather great today.`;
+      icon.src = "./icons/sunglasses.svg";
+      mainSelector.classList.add("sunny");
+      break;
+    case 'Clouds':
+      descriptionPlaceholder.innerHTML = `Light a fire and get cosy. ${city} is looking grey today.`;
+      icon.src = "./icons/clouds.svg";
+      mainSelector.classList.add("cloudy");
+      break;
+    case 'Rain':
+    case 'Thunderstorm':
+    case 'Drizzle':
+      descriptionPlaceholder.innerHTML = `Don't forget your umbrella. It's wet in ${city} today.`;
+      icon.src = "./icons/umbrella.svg"
+      mainSelector.classList.add("rainy");
+      break;
+    case 'Snow':
+      descriptionPlaceholder.innerHTML = `Light a fire and get cosy. ${city} looks snowy today.`;
+      icon.src = "./icons/snow.svg";
+      mainSelector.classList.add("snow");
+      break;
+    default:
+      descriptionPlaceholder.innerHTML = `Be careful today in ${city}!`;
+      icon.src = "./icons/unknown.svg";
+      mainSelector.classList.add("unknown");
+  };
+};
 
 const displayWeather = (weather, forecast) => {
   const { name, timezone } = weather;
-  const { country, sunrise, sunset } = weather.sys;
-  const { temp } = weather.main;
+  const { sunrise, sunset } = weather.sys;
+  const { temp, feels_like: feelsLike } = weather.main;
   const { main, description } = weather.weather[0];
-  
-  const sunriseReadable = new Date((sunrise + timezone) * 1000);
-  const sunsetReadable = new Date((sunset+ timezone) * 1000);
-
-  // we need to get the timezone offset so we can show it in the local time
-  // instead of GMT
-  const sunriseOffset = sunriseReadable.getTimezoneOffset() / 60;
-  const sunsetOffset = sunsetReadable.getTimezoneOffset() / 60;
 
   const futureForecast = filterFutureForecast(forecast.list);
 
   const weatherOutput = `
-    <div>
-      ${name}, ${country}
-    </div>
-    <div class="temp-desc">
-    ${description}  | ${Math.round(temp)}°C 
-    </div>
-    <div>
-      sunrise  ${sunriseReadable.getHours() + sunriseOffset}:${sunriseReadable.getMinutes().toString().padStart(2, "0")}
-    </div>
-    <div>
-      sunset  ${sunsetReadable.getHours() + sunsetOffset}:${sunsetReadable.getMinutes().toString().padStart(2, "0")}
-    </div>
-    
-    ${displayFutureForecast(futureForecast)}
-    `;
+    <p>
+      ${description} | ${Math.round(temp)} °C
+    </p>
+    <p>
+      feels like ${Math.round(feelsLike)} °C
+    </p>
+    <p>
+      sunrise ${getTime(sunrise, timezone)}
+    </p>
+    <p>
+      sunset ${getTime(sunset, timezone)}
+    </p>
+  `;
   weatherPlaceholder.innerHTML = weatherOutput;
+
+  forecastPlaceholder.innerHTML = `${displayFutureForecast(futureForecast)}`;
+  showDescription(name, main);
 };
 
 searchBar.onchange = async () => {
   const searchBarText = searchBar.value;
-  console.log(searchBarText)
+  searchBar.value = '';
   const weather = await fetchWeatherCity(searchBarText);
   const forecast = await fetchForecastCity(searchBarText);
   displayWeather(weather, forecast);
@@ -162,7 +198,4 @@ searchBar.onchange = async () => {
   const initialWeather = await fetchWeatherCity('stockholm');
   const initialForecast = await fetchForecastCity('stockholm');
   displayWeather(initialWeather, initialForecast);
-
-
-
 })();
