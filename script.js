@@ -13,7 +13,7 @@ const searchBar = document.getElementById('search-bar');
 const forecastPlaceholder = document.querySelector('.forecast');
 const descriptionPlaceholder = document.getElementById('description');
 
-const fetchWeatherCity = async ({
+const fetchWeather = async ({
   city,
   lat,
   lon,
@@ -37,7 +37,7 @@ const fetchWeatherCity = async ({
  
 };
 
-const fetchForecastCity = async ({
+const fetchForecast = async ({
   city,
   lat,
   lon,
@@ -175,20 +175,20 @@ const displayWeather = (weather, forecast) => {
 searchBar.onchange = async () => {
   const searchBarText = searchBar.value;
   searchBar.value = '';
-  const weather = await fetchWeatherCity({city: searchBarText});
-  const forecast = await fetchForecastCity({city: searchBarText});
+  const weather = await fetchWeather({city: searchBarText});
+  const forecast = await fetchForecast({city: searchBarText});
   displayWeather(weather, forecast);
 }
 
 geolocationLink.onclick = async () => {
-  const { latitude, longitude } = await getUserLatLong();
-  const weather = await fetchWeatherLatLong(latitude, longitude);
-  const forecast = await fetchForecastLatLong(latitude, longitude);
+  const { latitude: lat, longitude: lon } = await getUserLatLong();
+  const weather = await fetchWeather({lat, lon});
+  const forecast = await fetchForecast({lat, lon});
   displayWeather(weather, forecast);
 }
 
 (async() => {
-  const initialWeather = await fetchWeatherCity({city: 'stockholm'});
-  const initialForecast = await fetchForecastCity({city: 'stockholm'});
+  const initialWeather = await fetchWeather({city: 'stockholm'});
+  const initialForecast = await fetchForecast({city: 'stockholm'});
   displayWeather(initialWeather, initialForecast);
 })();
