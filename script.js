@@ -50,8 +50,7 @@ const fetchWeather = async ({
       }
     }
     const json = await res.json();
-    console.log(json);
-
+    // errorPlaceholder.innerHTML = '';
     return json;
   } catch (e) {
     console.error(e);
@@ -79,10 +78,7 @@ const fetchForecast = async ({
       }
     }
     const json = await res.json();
-    console.log(json);
-
-    errorPlaceholder.innerHTML = ``;
-
+    // errorPlaceholder.innerHTML = '';
     return json;
   } catch (e) {
     console.error(e.status);
@@ -98,6 +94,7 @@ const getUserLocation = async () => {
 const getUserLatLong = async () => {
   try {
     const position = await getUserLocation();
+    // errorPlaceholder.innerHTML = '';
     return position.coords;
   } catch (e) {
     if (e.code === 1) {
@@ -204,21 +201,27 @@ const showDescription = (city, description) => {
   };
 };
 
-const displayTemperatureMeasurementSetting = () => {
+const displayTemperature = () => {
+  const fahrenheitSelector = document.querySelectorAll('.fahrenheit');
+  const celciusSelector = document.querySelectorAll('.celcius');
   if (temperatureMeasurementSetting === celcius) {
-    celciusController.innerHTML = `
-      <b>°C</b>
-    `;
-    fahrenheitController.innerHTML = `
-      <a href="javascript:void(0)">°F</a>
-    `;
+    celciusController.innerHTML = `<b>°C</b>`;
+    fahrenheitController.innerHTML = `<a href="javascript:void(0)">°F</a>`;
+    fahrenheitSelector.forEach(element => {
+      element.style.display = 'none';
+    });
+    celciusSelector.forEach(element => {
+      element.style.display = 'flex';
+    });
   } else {
-    celciusController.innerHTML = `
-      <a href="javascript:void(0)">°C</a>
-    `;
-    fahrenheitController.innerHTML = `
-      <b>°F</b>
-    `;
+    celciusController.innerHTML = `<a href="javascript:void(0)">°C</a>`;
+    fahrenheitController.innerHTML = `<b>°F</b>`;
+    celciusSelector.forEach(element => {
+      element.style.display = 'none';
+    });
+    fahrenheitSelector.forEach(element => {
+      element.style.display = 'flex';
+    });
   }
 };
 
@@ -255,17 +258,7 @@ const displayWeather = (weather, forecast) => {
   forecastPlaceholder.innerHTML = `${displayFutureForecast(futureForecast)}`;
   showDescription(name, main);
 
-  if (temperatureMeasurementSetting === fahrenheit) {
-    const celciusSelector = document.querySelectorAll('.celcius');
-    celciusSelector.forEach(element => {
-      element.style.display = 'none';
-    });
-  } else {
-    const fahrenheitSelector = document.querySelectorAll('.fahrenheit');
-    fahrenheitSelector.forEach(element => {
-      element.style.display = 'none';
-    });
-  }
+  errorPlaceholder.innerHTML = '';
 };
 
 searchBar.onchange = async () => {
@@ -284,34 +277,18 @@ geolocationLink.onclick = async () => {
 };
 
 fahrenheitController.onclick = () => {
-  const fahrenheitSelector = document.querySelectorAll('.fahrenheit');
-  const celciusSelector = document.querySelectorAll('.celcius');
-  fahrenheitSelector.forEach(element => {
-    element.style.display = 'flex';
-  });
-  celciusSelector.forEach(element => {
-    element.style.display = 'none';
-  });
   temperatureMeasurementSetting = fahrenheit;
-  displayTemperatureMeasurementSetting();
+  displayTemperature();
 };
 
 celciusController.onclick = () => {
-  const celciusSelector = document.querySelectorAll('.celcius');
-  const fahrenheitSelector = document.querySelectorAll('.fahrenheit');
-  celciusSelector.forEach(element => {
-    element.style.display = 'flex';
-  });
-  fahrenheitSelector.forEach(element => {
-    element.style.display = 'none';
-  });
   temperatureMeasurementSetting = celcius;
-  displayTemperatureMeasurementSetting();
+  displayTemperature();
 };
 
 (async() => {
   const initialWeather = await fetchWeather({city: 'stockholm'});
   const initialForecast = await fetchForecast({city: 'stockholm'});
   displayWeather(initialWeather, initialForecast);
-  displayTemperatureMeasurementSetting();
+  displayTemperature();
 })();
