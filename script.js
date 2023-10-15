@@ -147,8 +147,8 @@ const displayFutureForecast = forecastList => {
     futureforecastList += `
       <div>
         <p>${forecast.day}</p>
-        <p class=${celcius}>${forecast.lowC}°C / ${forecast.highC}°C </p>
-        <p class=${fahrenheit}>${forecast.lowF}°F / ${forecast.highF}°F </p>
+        <p class=${celcius}>${forecast.lowC} °C / ${forecast.highC} °C </p>
+        <p class=${fahrenheit}>${forecast.lowF} °F / ${forecast.highF} °F </p>
       </div>
     `
   });
