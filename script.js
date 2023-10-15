@@ -12,6 +12,11 @@ const weatherPlaceholder = document.querySelector('.weather');
 const searchBar = document.getElementById('search-bar');
 const forecastPlaceholder = document.querySelector('.forecast');
 const descriptionPlaceholder = document.getElementById('description');
+const fahrenheitController = document.getElementById('control-f');
+const celciusController = document.getElementById('control-c');
+const controlPlaceHolder = document.querySelector(".control");
+
+let temperatureMeasurementSetting = 'celcius';
 
 const fetchWeather = async ({
   city,
@@ -75,6 +80,10 @@ const getUserLatLong = async () => {
   }
 };
 
+const celsiusToFahrenheit = celsius => {
+  return celsius * 9/5 + 32;
+};
+
 const filterFutureForecast = forecastList => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -85,17 +94,21 @@ const filterFutureForecast = forecastList => {
 
     if (!acc.hasOwnProperty(forecastDate)) {
       acc[forecastDate] = {
-        high: Number.MIN_VALUE,
-        low: Number.MAX_VALUE,
+        highC: Number.MIN_VALUE,
+        lowC: Number.MAX_VALUE,
+        highF: Number.MIN_VALUE,
+        lowF: Number.MAX_VALUE,
         date: forecastDate,
         day: systemDate.getDay() === forecastDateReadable.getDay() ? 'Today' : days[forecastDateReadable.getDay()],
       };
     }
-    if (forecast.main.temp_max > acc[forecastDate].high) {
-      acc[forecastDate].high = Math.round(forecast.main.temp_max);
+    if (forecast.main.temp_max > acc[forecastDate].highC) {
+      acc[forecastDate].highC = Math.round(forecast.main.temp_max);
+      acc[forecastDate].highF = Math.round(celsiusToFahrenheit(forecast.main.temp_max));
     }
-    if (forecast.main.temp_min < acc[forecastDate].low) {
-      acc[forecastDate].low = Math.round(forecast.main.temp_min);
+    if (forecast.main.temp_min < acc[forecastDate].lowC) {
+      acc[forecastDate].lowC = Math.round(forecast.main.temp_min);
+      acc[forecastDate].lowF = Math.round(celsiusToFahrenheit(forecast.main.temp_min));
     }
     return acc;
   }, {});
@@ -111,7 +124,8 @@ const displayFutureForecast = forecastList => {
     futureforecastList += `
       <div>
         <p>${forecast.day}</p>
-        <p>${forecast.low}°C / ${forecast.high}°C </p>
+        <p class="celcius">${forecast.lowC}°C / ${forecast.highC}°C </p>
+        <p class="fahrenheit">${forecast.lowF}°F / ${forecast.highF}°F </p>
       </div>
     `
   });
@@ -162,6 +176,24 @@ const showDescription = (city, description) => {
   };
 };
 
+const displayTemperatureMeasurementSetting = () => {
+  if (temperatureMeasurementSetting === 'celcius') {
+    celciusController.innerHTML = `
+      <b>Celcius</b>
+    `;
+    fahrenheitController.innerHTML = `
+      <a href="javascript:void(0)">Fahrenheit</a>
+    `;
+  } else {
+    celciusController.innerHTML = `
+      <a href="javascript:void(0)">Celcius</a>
+    `;
+    fahrenheitController.innerHTML = `
+      <b>Fahrenheit</b>
+    `;
+  }
+};
+
 const displayWeather = (weather, forecast) => {
   const { name, timezone } = weather;
   const { sunrise, sunset } = weather.sys;
@@ -171,11 +203,17 @@ const displayWeather = (weather, forecast) => {
   const futureForecast = filterFutureForecast(forecast.list);
 
   const weatherOutput = `
-    <p>
+    <p class="celcius">
       ${description} | ${Math.round(temp)} °C
     </p>
-    <p>
+    <p class="celcius">
       feels like ${Math.round(feelsLike)} °C
+    </p>
+    <p class="fahrenheit">
+      ${description} | ${Math.round(celsiusToFahrenheit(temp))} °F
+    </p>
+    <p class="fahrenheit">
+      feels like ${Math.round(celsiusToFahrenheit(feelsLike))} °F
     </p>
     <p>
       sunrise ${getTime(sunrise, timezone)}
@@ -188,6 +226,18 @@ const displayWeather = (weather, forecast) => {
 
   forecastPlaceholder.innerHTML = `${displayFutureForecast(futureForecast)}`;
   showDescription(name, main);
+
+  if (temperatureMeasurementSetting === 'fahrenheit') {
+    const celciusSelector = document.querySelectorAll('.celcius');
+    celciusSelector.forEach(element => {
+      element.style.display = 'none';
+    });
+  } else {
+    const fahrenheitSelector = document.querySelectorAll('.fahrenheit');
+    fahrenheitSelector.forEach(element => {
+      element.style.display = 'none';
+    });
+  }
 };
 
 searchBar.onchange = async () => {
@@ -196,17 +246,44 @@ searchBar.onchange = async () => {
   const weather = await fetchWeather({city: searchBarText});
   const forecast = await fetchForecast({city: searchBarText});
   displayWeather(weather, forecast);
-}
+};
 
 geolocationLink.onclick = async () => {
   const { latitude: lat, longitude: lon } = await getUserLatLong();
   const weather = await fetchWeather({lat, lon});
   const forecast = await fetchForecast({lat, lon});
   displayWeather(weather, forecast);
-}
+};
+
+fahrenheitController.onclick = () => {
+  const fahrenheitSelector = document.querySelectorAll('.fahrenheit');
+  const celciusSelector = document.querySelectorAll('.celcius');
+  fahrenheitSelector.forEach(element => {
+    element.style.display = 'flex';
+  });
+  celciusSelector.forEach(element => {
+    element.style.display = 'none';
+  });
+  temperatureMeasurementSetting = 'fahrenheit';
+  displayTemperatureMeasurementSetting();
+};
+
+celciusController.onclick = () => {
+  const celciusSelector = document.querySelectorAll('.celcius');
+  const fahrenheitSelector = document.querySelectorAll('.fahrenheit');
+  celciusSelector.forEach(element => {
+    element.style.display = 'flex';
+  });
+  fahrenheitSelector.forEach(element => {
+    element.style.display = 'none';
+  });
+  temperatureMeasurementSetting = 'celcius';
+  displayTemperatureMeasurementSetting();
+};
 
 (async() => {
   const initialWeather = await fetchWeather({city: 'stockholm'});
   const initialForecast = await fetchForecast({city: 'stockholm'});
   displayWeather(initialWeather, initialForecast);
+  displayTemperatureMeasurementSetting();
 })();

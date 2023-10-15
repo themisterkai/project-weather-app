@@ -60,6 +60,10 @@ p {
   max-width: 400px;
 }
 
+.control {
+  text-align: right;
+}
+
 .forecast div {
   display: flex;
   justify-content: space-between;
