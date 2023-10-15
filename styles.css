@@ -8,37 +8,23 @@ body {
 
 .control {
   margin-bottom: 10px;
+  text-align: right;
 }
 
 .geolocation {
   margin-bottom: 30px;
-  /* text-align: center; */
   font-size: 16px;
 }
 
-.cloudy {
-  background: #F4F7F8;
-  color: #F47775;
+.forecast {
+  width: 100%;
+  max-width: 400px;
 }
 
-.sunny {
-  background: #F7E9B9;
-  color: #2A5510;
-}
-
-.rainy {
-  background: #A3DEF7;
-  color: #164A68;
-}
-
-.snow {
-  background: #F4F7F8;
-  color: #AEB6FF;
-}
-
-.unknown {
-  background: #dbf6e9;
-  color: #31326f;
+.forecast div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed;
 }
 
 .weather {
@@ -50,6 +36,17 @@ p {
   margin: 2px;
 }
 
+input {
+  background: #F4F7F8;
+  height: 20px;
+  width: 200px;
+  font-size: 16px;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 30px 0 5px;
+}
+
 .description-box h2 {
   font-size: 32px;
   max-width: 400px;
@@ -57,21 +54,6 @@ p {
 
 .description-box img {
   height: 70px;
-}
-
-.forecast {
-  width: 100%;
-  max-width: 400px;
-}
-
-.control {
-  text-align: right;
-}
-
-.forecast div {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px dashed;
 }
 
 footer {
@@ -86,67 +68,61 @@ footer {
   align-items: left;
 }
 
-input {
+.error {
+  font-size: 14px;
+}
+
+.grey {
   background: #F4F7F8;
-  height: 20px;
-  width: 200px;
-  font-size: 16px;
-  border: 1px solid;
-  border-radius: 4px;
-  padding: 4px 8px;
-  margin: 30px 0 5px;
-}
-
-.cloudy a {
   color: #F47775;
 }
 
-.cloudy input, .cloudy input::placeholder, .cloudy a {
+.sunny {
+  background: #F7E9B9;
+  color: #2A5510;
+}
+
+.wet {
+  background: #A3DEF7;
+  color: #164A68;
+}
+
+.snow {
+  background: #F4F7F8;
+  color: #AEB6FF;
+}
+
+.default {
+  background: #dbf6e9;
+  color: #31326f;
+}
+
+.grey a {
   color: #F47775;
 }
 
-.rainy input, .rainy input::placeholder, .rainy a {
+.grey input, .grey input::placeholder, .grey a {
+  color: #F47775;
+}
+
+.wet input, .wet input::placeholder, .wet a {
   color: #164A68;
 }
 
 .sunny input, .sunny input::placeholder, .sunny a {
   color:  #2A5510;
-  border-radius: 4px;
 }
 
 .snow input, .snow input::placeholder, .snow a {
   color: #AEB6FF;
 }
 
-button {
-  color: white;
-  height: 30px;
-  font-size: 16px;
-  border-radius: 4px;
-  padding: 4px 8px;
-  border: none;
-  border-radius: 4px;
-}
-
-.cloudy button {
-  background: #F47775;
-}
-
-.rainy button {
-  background: #164A68;
-}
-
-.sunny button {
-  background:  #2A5510;
-  border-radius: 4px;
-}
-
-.error {
-  font-size: 14px;
+.default input, .default input::placeholder, .default a {
+  color: #31326f;
 }
 
 @media (min-width: 668px) {
-  .todays-numbers p {
+  .weather p {
     font-size: 20px;
   }
 
