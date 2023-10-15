@@ -74,27 +74,32 @@ footer {
 }
 
 .grey {
-  background: #F4F7F8;
+  /* background: #F4F7F8; */
+  background: linear-gradient(#F4F7F8, #bdc4c6);
   color: #F47775;
 }
 
 .sunny {
-  background: #F7E9B9;
+  /* background: #F7E9B9; */
+  background: linear-gradient(#F7E9B9, #fbd042);
   color: #2A5510;
 }
 
 .wet {
-  background: #A3DEF7;
+  /* background: #A3DEF7; */
+  background: linear-gradient(#A3DEF7, #4ca5d2);
   color: #164A68;
 }
 
 .snow {
-  background: #F4F7F8;
-  color: #AEB6FF;
+  /* background: #F4F7F8; */
+  background: linear-gradient(#E9F8FF, #b3e6f7);
+  color: #848ff0;
 }
 
 .default {
-  background: #dbf6e9;
+  /* background: #dbf6e9; */
+  background: linear-gradient(#dbf6e9, #91c8af);
   color: #31326f;
 }
 
@@ -115,7 +120,7 @@ footer {
 }
 
 .snow input, .snow input::placeholder, .snow a {
-  color: #AEB6FF;
+  color: #848ff0;
 }
 
 .default input, .default input::placeholder, .default a {
