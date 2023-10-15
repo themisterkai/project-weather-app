@@ -6,9 +6,13 @@ body {
   align-items: center;
 }
 
+.control {
+  margin-bottom: 10px;
+}
+
 .geolocation {
   margin-bottom: 30px;
-  text-align: center;
+  /* text-align: center; */
   font-size: 16px;
 }
 
@@ -73,6 +77,13 @@ p {
 footer {
   width: 100%;
   max-width: 400px;
+}
+
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
 }
 
 input {
@@ -155,5 +166,9 @@ button {
   footer {
     width: 100%;
     max-width: 500px;
+  }
+
+  input {
+    width: 200px;
   }
 }

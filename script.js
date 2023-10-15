@@ -1,22 +1,17 @@
-
-
-
-// URLs
-const weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?';
-const forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?';
-
 // HTML Selectors
 const mainSelector = document.getElementById("main");
 const geolocationLink = document.getElementById("geolink");
 const weatherPlaceholder = document.querySelector('.weather');
+const errorPlaceholder = document.querySelector('.error');
 const searchBar = document.getElementById('search-bar');
 const forecastPlaceholder = document.querySelector('.forecast');
 const descriptionPlaceholder = document.getElementById('description');
 const fahrenheitController = document.getElementById('control-f');
 const celciusController = document.getElementById('control-c');
 const controlPlaceHolder = document.querySelector(".control");
+const celciusSelector = document.querySelectorAll('.celcius');
 
-let temperatureMeasurementSetting = 'celcius';
+let temperatureMeasurementSetting = celcius;
 
 const fetchWeather = async ({
   city,
@@ -30,7 +25,12 @@ const fetchWeather = async ({
   try {
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error(res.error);
+      if (res.status === 404){
+        errorPlaceholder.innerHTML = error404;
+        return;
+      } else {
+        throw new Error(res.error);
+      }
     }
     const json = await res.json();
     console.log(json);
@@ -54,14 +54,21 @@ const fetchForecast = async ({
   try {
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error(res.error);
+      if (res.status === 404){
+        errorPlaceholder.innerHTML = error404;
+        return;
+      } else {
+        throw new Error(res);
+      }
     }
     const json = await res.json();
     console.log(json);
 
+    errorPlaceholder.innerHTML = ``;
+
     return json;
   } catch (e) {
-    console.error(e);
+    console.error(e.status);
   }
 };
 
@@ -76,6 +83,11 @@ const getUserLatLong = async () => {
     const position = await getUserLocation();
     return position.coords;
   } catch (e) {
+    if (e.code === 1) {
+      errorPlaceholder.innerHTML = errorGeoCode1;
+    } else {
+      errorPlaceholder.innerHTML = errorGeoCodeOthers;
+    }
     console.error(e);
   }
 };
@@ -94,10 +106,10 @@ const filterFutureForecast = forecastList => {
 
     if (!acc.hasOwnProperty(forecastDate)) {
       acc[forecastDate] = {
-        highC: Number.MIN_VALUE,
-        lowC: Number.MAX_VALUE,
-        highF: Number.MIN_VALUE,
-        lowF: Number.MAX_VALUE,
+        highC: Math.round(forecast.main.temp_max),
+        lowC: Math.round(forecast.main.temp_min),
+        highF: Math.round(celsiusToFahrenheit(forecast.main.temp_max)),
+        lowF: Math.round(celsiusToFahrenheit(forecast.main.temp_min)),
         date: forecastDate,
         day: systemDate.getDay() === forecastDateReadable.getDay() ? 'Today' : days[forecastDateReadable.getDay()],
       };
@@ -124,8 +136,8 @@ const displayFutureForecast = forecastList => {
     futureforecastList += `
       <div>
         <p>${forecast.day}</p>
-        <p class="celcius">${forecast.lowC}°C / ${forecast.highC}°C </p>
-        <p class="fahrenheit">${forecast.lowF}°F / ${forecast.highF}°F </p>
+        <p class=${celcius}>${forecast.lowC}°C / ${forecast.highC}°C </p>
+        <p class=${fahrenheit}>${forecast.lowF}°F / ${forecast.highF}°F </p>
       </div>
     `
   });
@@ -144,7 +156,6 @@ const getTime = (time, timezone) => {
 
 const showDescription = (city, description) => {
   mainSelector.classList.remove(...mainSelector.classList);
-  // description = 'Sno';
   switch (description) {
     case 'Clear':
       descriptionPlaceholder.innerHTML = `Get your sunnies on. ${city} is looking rather great today.`;
@@ -177,19 +188,19 @@ const showDescription = (city, description) => {
 };
 
 const displayTemperatureMeasurementSetting = () => {
-  if (temperatureMeasurementSetting === 'celcius') {
+  if (temperatureMeasurementSetting === celcius) {
     celciusController.innerHTML = `
-      <b>Celcius</b>
+      <b>°C</b>
     `;
     fahrenheitController.innerHTML = `
-      <a href="javascript:void(0)">Fahrenheit</a>
+      <a href="javascript:void(0)">°F</a>
     `;
   } else {
     celciusController.innerHTML = `
-      <a href="javascript:void(0)">Celcius</a>
+      <a href="javascript:void(0)">°C</a>
     `;
     fahrenheitController.innerHTML = `
-      <b>Fahrenheit</b>
+      <b>°F</b>
     `;
   }
 };
@@ -203,16 +214,16 @@ const displayWeather = (weather, forecast) => {
   const futureForecast = filterFutureForecast(forecast.list);
 
   const weatherOutput = `
-    <p class="celcius">
+    <p class=${celcius}>
       ${description} | ${Math.round(temp)} °C
     </p>
-    <p class="celcius">
+    <p class=${celcius}>
       feels like ${Math.round(feelsLike)} °C
     </p>
-    <p class="fahrenheit">
+    <p class=${fahrenheit}>
       ${description} | ${Math.round(celsiusToFahrenheit(temp))} °F
     </p>
-    <p class="fahrenheit">
+    <p class=${fahrenheit}>
       feels like ${Math.round(celsiusToFahrenheit(feelsLike))} °F
     </p>
     <p>
@@ -227,7 +238,7 @@ const displayWeather = (weather, forecast) => {
   forecastPlaceholder.innerHTML = `${displayFutureForecast(futureForecast)}`;
   showDescription(name, main);
 
-  if (temperatureMeasurementSetting === 'fahrenheit') {
+  if (temperatureMeasurementSetting === fahrenheit) {
     const celciusSelector = document.querySelectorAll('.celcius');
     celciusSelector.forEach(element => {
       element.style.display = 'none';
@@ -264,7 +275,7 @@ fahrenheitController.onclick = () => {
   celciusSelector.forEach(element => {
     element.style.display = 'none';
   });
-  temperatureMeasurementSetting = 'fahrenheit';
+  temperatureMeasurementSetting = fahrenheit;
   displayTemperatureMeasurementSetting();
 };
 
@@ -277,7 +288,7 @@ celciusController.onclick = () => {
   fahrenheitSelector.forEach(element => {
     element.style.display = 'none';
   });
-  temperatureMeasurementSetting = 'celcius';
+  temperatureMeasurementSetting = celcius;
   displayTemperatureMeasurementSetting();
 };
 
