@@ -19,5 +19,6 @@
         </g>
       </g>
     </g>
+    <!-- <animateTransform attributeType="XML" attributeName="transform" type="scale" values="1;0.8;1" additive="sum" begin="0s" dur="4s" repeatCount="indefinite"/> -->
   </g>
 </svg>

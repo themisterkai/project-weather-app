@@ -1,0 +1,166 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.control {
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+.geolocation {
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+.forecast {
+  width: 100%;
+  max-width: 400px;
+}
+
+.forecast div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed;
+}
+
+.weather {
+  margin-bottom: 30px;
+}
+
+p {
+  font-size: 18px;
+  margin: 2px;
+}
+
+input {
+  background: #F4F7F8;
+  height: 20px;
+  width: 200px;
+  font-size: 16px;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 30px 0 5px;
+}
+
+.description-box h2 {
+  font-size: 32px;
+  max-width: 400px;
+}
+
+.description-box img {
+  height: 70px;
+}
+
+footer {
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+}
+
+.error {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.grey {
+  background: linear-gradient(#F4F7F8, #cacdce);
+  color: #F47775;
+}
+
+.sunny {
+  background: linear-gradient(#F7E9B9, #f3d162);
+  color: #2A5510;
+}
+
+.wet {
+  background: linear-gradient(#A3DEF7, #4ca5d2);
+  color: #164A68;
+}
+
+.snow {
+  background: linear-gradient(#E9F8FF, #b3e6f7);
+  color: #848ff0;
+}
+
+.default {
+  background: linear-gradient(#dbf6e9, #91c8af);
+  color: #31326f;
+}
+
+.grey a {
+  color: #F47775;
+}
+
+.grey input, .grey input::placeholder, .grey a {
+  color: #F47775;
+}
+
+.wet input, .wet input::placeholder, .wet a {
+  color: #164A68;
+}
+
+.sunny input, .sunny input::placeholder, .sunny a {
+  color:  #2A5510;
+}
+
+.snow input, .snow input::placeholder, .snow a {
+  color: #848ff0;
+}
+
+.default input, .default input::placeholder, .default a {
+  color: #31326f;
+}
+
+@media (min-width: 668px) {
+  .weather p {
+    font-size: 20px;
+  }
+
+  .description-box img {
+    width: 150px;
+  }
+
+  .description-box h2 {
+    font-size: 38px;
+    max-width: 500px;
+  }
+
+  .forecast {
+    max-width: 500px;
+  }
+
+  footer {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  input {
+    width: 200px;
+  }
+}
+
+#icon {
+    height: 70px;
+    transform-origin: left top;
+    animation: scale 4000ms ease-in-out alternate infinite;
+}
+
+@keyframes scale {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
