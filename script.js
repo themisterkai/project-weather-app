@@ -6,8 +6,8 @@ const errorPlaceholder = document.querySelector('.error');
 const searchBar = document.getElementById('search-bar');
 const forecastPlaceholder = document.querySelector('.forecast');
 const descriptionPlaceholder = document.getElementById('description');
-const fahrenheitController = document.getElementById('control-f');
-const celciusController = document.getElementById('control-c');
+const fahrenheitController = document.getElementById('control-fahrenheit');
+const celciusController = document.getElementById('control-celcius');
 const controlPlaceHolder = document.querySelector(".control");
 const celciusSelector = document.querySelectorAll('.celcius');
 
