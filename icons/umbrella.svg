@@ -12,6 +12,6 @@
         <rect id="Rectangle_4" data-name="Rectangle 4" width="73" height="73" fill="none"/>
       </g>
     </g>
-    <animateTransform attributeType="XML" attributeName="transform" type="scale" values="1;0.8;1" additive="sum" begin="0s" dur="4s" repeatCount="indefinite"/>
+    <!-- <animateTransform attributeType="XML" attributeName="transform" type="scale" values="1;0.8;1" additive="sum" begin="0s" dur="4s" repeatCount="indefinite"/> -->
   </g>
 </svg>
