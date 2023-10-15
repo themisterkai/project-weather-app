@@ -294,6 +294,8 @@ celciusController.onclick = () => {
   displayTemperature();
 };
 
+// We call this anonymous async function when the page is first loaded
+// We call it with the city `Stockholm`
 (async() => {
   const initialWeather = await fetchWeather({city: 'stockholm'});
   const initialForecast = await fetchForecast({city: 'stockholm'});
