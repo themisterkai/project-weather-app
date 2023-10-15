@@ -14,7 +14,7 @@
   <div>
     <div class="top">
       <div class="control">
-        <span id="control-c">Celcius</span> | <span id="control-f">Fahrenheit</span>
+        <span id="control-c"></span> | <span id="control-f"></span>
       </div>
       <div class="weather"></div>
     </div>
@@ -24,10 +24,12 @@
     </div>
   </div>
   <div id="forecast" class="forecast"></div>
-  <div class="search-bar" >
-    <input id="search-bar" type="text" placeholder="Search by city name">
-    <p class="geolocation">or <a href="javascript:void(0)" id="geolink">use current location</a></p>
-  </div>
+  <footer>
+    <div class="search-bar" >
+      <input id="search-bar" type="text" placeholder="Search by city name">
+      <span class="geolocation">or <a href="javascript:void(0)" id="geolink">use current location</a></span>
+    </div>
+  </footer>
   <script src="./constants.js"></script>
   <script src="./script.js"></script>
 </body>
