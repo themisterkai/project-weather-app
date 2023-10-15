@@ -1,19 +1,3 @@
-// API Key
-const API_KEY = 'e4134b5157580978642e8b8494680fc8';
-
-// URLs
-const weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?';
-const forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?';
-
-// Error messages
-const error404 = `Can't find what you're looking for. Try another city, <br> or add the country as well: 'Stockholm, Sweden'!`;
-const errorGeoCode1 = `Permission required to proceed with  acquisition of the geolocation information. Please give permission and try again.`;
-const errorGeoCodeOthers = `Acquisition of the geolocation information failed. Please try again.`;
-
-// String constants 
-const celcius = 'celcius';
-const fahrenheit = 'fahrenheit';
-
 // HTML Selectors
 const mainSelector = document.getElementById("main");
 const geolocationLink = document.getElementById("geolink");
@@ -30,6 +14,8 @@ const celciusSelector = document.querySelectorAll('.celcius');
 // We set the temperature to celcius when we first load the app
 let temperatureMeasurementSetting = celcius;
 
+// fetchWeather fetches the current weather forecast either using a
+// city name provided or the lat/lon of a specific place.
 const fetchWeather = async ({
   city,
   lat,
@@ -57,6 +43,8 @@ const fetchWeather = async ({
  
 };
 
+// fetchForecast fetches the future weather forecast either using a
+// city name provided or the lat/lon of a specific place.
 const fetchForecast = async ({
   city,
   lat,
@@ -83,12 +71,16 @@ const fetchForecast = async ({
   }
 };
 
+// getUserLocation calls the browser built-in geolocation functionality
+// to return the user's current geolcation information
 const getUserLocation = async () => {
    return new Promise((resolve, reject) =>
       navigator.geolocation.getCurrentPosition(resolve, reject)
     );
 };
 
+// getUserLatLong is a helper function to get the user's geolocation information.
+// It return the coordinates on success, and displays and returns errors on failure.
 const getUserLatLong = async () => {
   try {
     const position = await getUserLocation();
@@ -103,11 +95,14 @@ const getUserLatLong = async () => {
   }
 };
 
+// celsiusToFahrenheit is a helper function to convert celcius to fahrenheit.
 const celsiusToFahrenheit = celsius => {
   return celsius * 9/5 + 32;
 };
 
-const filterFutureForecast = forecastList => {
+// formatFutureForecast reduces the list of future forecast to return
+// the high and low temperatures for the upcoming days.
+const formatFutureForecast = forecastList => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
   const forecastCombined =  forecastList.reduce((acc, forecast) => {
@@ -136,11 +131,15 @@ const filterFutureForecast = forecastList => {
     return acc;
   }, {});
 
+  // we want to return the object above as an array of object
+  // sorted by date.
   return Object.values(forecastCombined).sort((a, b) => {
     return new Date(a.date) - new Date(b.date);
   });
 };
 
+// displayFutureForecast takes in a list of future forecast
+// and displays it to the screen.
 const displayFutureForecast = forecastList => {
   let futureforecastList = '';
   forecastList.forEach(forecast => {
@@ -155,17 +154,20 @@ const displayFutureForecast = forecastList => {
   return futureforecastList;
 };
 
+// getTime is a helper function that takes in the time and timezone information
+// so we can display time in the local time of a place selected.
 const getTime = (time, timezone) => {
   const timeReadable = new Date((time + timezone) * 1000);
-
    // we need to get the timezone offset so we can show it in the local time
   // instead of GMT
   const timezoneOffset = timeReadable.getTimezoneOffset() / 60;
-
   return `${timeReadable.getHours() + timezoneOffset}.${timeReadable.getMinutes().toString().padStart(2, "0")}`
 };
 
+// showDescription is our function to display the appropriate text, icons,
+// and styling depending on the weather description.
 const showDescription = (city, description) => {
+  // we need to remove any previous class that was added to the body
   mainSelector.classList.remove(...mainSelector.classList);
   switch (description) {
     case 'Clear':
@@ -181,7 +183,6 @@ const showDescription = (city, description) => {
     case 'Rain':
     case 'Thunderstorm':
     case 'Drizzle':
-    case 'Mist':
       descriptionPlaceholder.innerHTML = `Don't forget your umbrella. It's wet in ${city} today.`;
       icon.src = "./icons/umbrella.svg"
       mainSelector.classList.add("wet");
@@ -191,13 +192,18 @@ const showDescription = (city, description) => {
       icon.src = "./icons/snow.svg";
       mainSelector.classList.add("snow");
       break;
+    case 'Fog':
+    case 'Mist':
     default:
       descriptionPlaceholder.innerHTML = `Be careful today in ${city}!`;
-      icon.src = "./icons/unknown.svg";
+      icon.src = "./icons/other.svg";
       mainSelector.classList.add("default");
   };
 };
 
+// displayTemperature displays the appropriate temperature depending
+// on which meaurement the user has chosen. When a new option is chosen,
+// we display the appropriate elements and hide the ones not needed.
 const displayTemperature = () => {
   const fahrenheitSelector = document.querySelectorAll('.fahrenheit');
   const celciusSelector = document.querySelectorAll('.celcius');
@@ -222,13 +228,16 @@ const displayTemperature = () => {
   }
 };
 
+// displayWeather takes in the result of the weather and forecast
+// API calls to display it on the screen. This is our main display function
+// and calls most of the other ones 
 const displayWeather = (weather, forecast) => {
   const { name, timezone } = weather;
   const { sunrise, sunset } = weather.sys;
   const { temp, feels_like: feelsLike } = weather.main;
   const { main, description } = weather.weather[0];
 
-  const futureForecast = filterFutureForecast(forecast.list);
+  const futureForecast = formatFutureForecast(forecast.list);
 
   const weatherOutput = `
     <p class=${celcius}>
@@ -254,6 +263,8 @@ const displayWeather = (weather, forecast) => {
 
   forecastPlaceholder.innerHTML = `${displayFutureForecast(futureForecast)}`;
   showDescription(name, main);
+  
+  displayTemperature();
 
   errorPlaceholder.innerHTML = '';
 };
@@ -264,7 +275,6 @@ searchBar.onchange = async () => {
   const weather = await fetchWeather({city: searchBarText});
   const forecast = await fetchForecast({city: searchBarText});
   displayWeather(weather, forecast);
-  displayTemperature();
 };
 
 geolocationLink.onclick = async () => {
@@ -272,7 +282,6 @@ geolocationLink.onclick = async () => {
   const weather = await fetchWeather({lat, lon});
   const forecast = await fetchForecast({lat, lon});
   displayWeather(weather, forecast);
-  displayTemperature();
 };
 
 fahrenheitController.onclick = () => {
@@ -289,5 +298,4 @@ celciusController.onclick = () => {
   const initialWeather = await fetchWeather({city: 'stockholm'});
   const initialForecast = await fetchForecast({city: 'stockholm'});
   displayWeather(initialWeather, initialForecast);
-  displayTemperature();
 })();
