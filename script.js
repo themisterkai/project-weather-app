@@ -50,7 +50,6 @@ const fetchWeather = async ({
       }
     }
     const json = await res.json();
-    // errorPlaceholder.innerHTML = '';
     return json;
   } catch (e) {
     console.error(e);
@@ -78,7 +77,6 @@ const fetchForecast = async ({
       }
     }
     const json = await res.json();
-    // errorPlaceholder.innerHTML = '';
     return json;
   } catch (e) {
     console.error(e.status);
@@ -94,7 +92,6 @@ const getUserLocation = async () => {
 const getUserLatLong = async () => {
   try {
     const position = await getUserLocation();
-    // errorPlaceholder.innerHTML = '';
     return position.coords;
   } catch (e) {
     if (e.code === 1) {
@@ -267,6 +264,7 @@ searchBar.onchange = async () => {
   const weather = await fetchWeather({city: searchBarText});
   const forecast = await fetchForecast({city: searchBarText});
   displayWeather(weather, forecast);
+  displayTemperature();
 };
 
 geolocationLink.onclick = async () => {
@@ -274,6 +272,7 @@ geolocationLink.onclick = async () => {
   const weather = await fetchWeather({lat, lon});
   const forecast = await fetchForecast({lat, lon});
   displayWeather(weather, forecast);
+  displayTemperature();
 };
 
 fahrenheitController.onclick = () => {
