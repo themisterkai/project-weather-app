@@ -1,5 +1,5 @@
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   margin: 30px;
   display: flex;
   flex-direction: column;
@@ -34,13 +34,13 @@ body {
 .high {
   padding-left: 5px;
   text-align: left;
-  min-width: 65px;
+  min-width: 80px;
 }
 
 .low {
   padding-right: 5px;
   text-align: left;
-  min-width: 65px;
+  min-width: 80px;
 }
 
 p {
@@ -49,7 +49,7 @@ p {
 }
 
 input {
-  background: #F4F7F8;
+  background: #f4f7f8;
   height: 20px;
   width: 200px;
   font-size: 16px;
@@ -86,22 +86,22 @@ footer {
 }
 
 .grey {
-  background: linear-gradient(#F4F7F8, #cacdce);
-  color: #F47775;
+  background: linear-gradient(#f4f7f8, #cacdce);
+  color: #f47775;
 }
 
 .sunny {
-  background: linear-gradient(#F7E9B9, #f3d162);
-  color: #2A5510;
+  background: linear-gradient(#f7e9b9, #f3d162);
+  color: #2a5510;
 }
 
 .wet {
-  background: linear-gradient(#A3DEF7, #4ca5d2);
-  color: #164A68;
+  background: linear-gradient(#a3def7, #4ca5d2);
+  color: #164a68;
 }
 
 .snow {
-  background: linear-gradient(#E9F8FF, #b3e6f7);
+  background: linear-gradient(#e9f8ff, #b3e6f7);
   color: #848ff0;
 }
 
@@ -111,26 +111,36 @@ footer {
 }
 
 .grey a {
-  color: #F47775;
+  color: #f47775;
 }
 
-.grey input, .grey input::placeholder, .grey a {
-  color: #F47775;
+.grey input,
+.grey input::placeholder,
+.grey a {
+  color: #f47775;
 }
 
-.wet input, .wet input::placeholder, .wet a {
-  color: #164A68;
+.wet input,
+.wet input::placeholder,
+.wet a {
+  color: #164a68;
 }
 
-.sunny input, .sunny input::placeholder, .sunny a {
-  color:  #2A5510;
+.sunny input,
+.sunny input::placeholder,
+.sunny a {
+  color: #2a5510;
 }
 
-.snow input, .snow input::placeholder, .snow a {
+.snow input,
+.snow input::placeholder,
+.snow a {
   color: #848ff0;
 }
 
-.default input, .default input::placeholder, .default a {
+.default input,
+.default input::placeholder,
+.default a {
   color: #31326f;
 }
 
@@ -163,9 +173,9 @@ footer {
 }
 
 #icon {
-    height: 70px;
-    transform-origin: left top;
-    animation: scale 4000ms ease-in-out alternate infinite;
+  height: 70px;
+  transform-origin: left top;
+  animation: scale 4000ms ease-in-out alternate infinite;
 }
 
 @keyframes scale {
