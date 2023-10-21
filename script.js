@@ -167,14 +167,16 @@ const displayFutureForecast = forecastList => {
 // getTime is a helper function that takes in the time and timezone information
 // so we can display time in the local time of a place selected.
 const getTime = (time, timezone) => {
-  const timeReadable = new Date((time + timezone) * 1000);
+  const timeFromAPI = new Date((time + timezone) * 1000);
   // we need to get the timezone offset so we can show it in the local time
   // instead of GMT
-  const timezoneOffset = timeReadable.getTimezoneOffset() / 60;
-  return `${timeReadable.getHours() + timezoneOffset}.${timeReadable
-    .getMinutes()
-    .toString()
-    .padStart(2, '0')}`;
+  const timezoneOffset = timeFromAPI.getTimezoneOffset() * 60000;
+  return (
+    new Date(timeFromAPI.getTime() + timezoneOffset)
+      //set locale to 'en-uk' so we get it in the 24-hour format
+      .toLocaleTimeString(['en-uk'], { hour: '2-digit', minute: '2-digit' })
+      .replace(':', '.')
+  );
 };
 
 // showDescription is our function to display the appropriate text, icons,
